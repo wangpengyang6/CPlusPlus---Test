@@ -44,7 +44,7 @@ namespace wpy
 			swap(tmp);
 		}
 
-		//vector(vector<T>& v)//×¢ÒâÉî¿½±´ÎÊÌâ
+		//vector(vector<T>& v)//æ³¨æ„æ·±æ‹·è´é—®é¢˜
 		//{
 		//	_start = new T[v.capacity()];
 		//	for (size_t i = 0; i < v.size(); i++)
@@ -126,7 +126,7 @@ namespace wpy
 				T* tmp = new T[n];
 				if (_start)
 				{
-					//memcpy(tmp, _start, size() * sizeof(T));//Ôì³ÉÇ³¿½±´ÎÊÌâ
+					//memcpy(tmp, _start, size() * sizeof(T));//é€ æˆæµ…æ‹·è´é—®é¢˜
 					for (size_t i  = 0; i < size(); i++)
 					{
 						tmp[i] = _start[i];
@@ -139,6 +139,11 @@ namespace wpy
 				_end_of_storage = _start + n;
 			}
 		}
+        vector<T>& operator= (vector<T>& v)
+        {
+            swap(v);
+            return *this;
+        }
 		void erase(iterator pos)
 		{
 			assert(pos >= _start);
@@ -157,7 +162,7 @@ namespace wpy
 			if (size() == capacity())
 			{
 				size_t len = pos - _start;
-				reserve(capacity() == 0 ? 4 : capacity() * 2); //¿ªÄÚ´æÊÇÒìµØ¿ª£¬ÕâÑù»áµ¼ÖÂµü´úÆ÷Ê§Ğ§(Ò°Ö¸ÕëÎÊÌâ)
+				reserve(capacity() == 0 ? 4 : capacity() * 2); //å¼€å†…å­˜æ˜¯å¼‚åœ°å¼€ï¼Œè¿™æ ·ä¼šå¯¼è‡´è¿­ä»£å™¨å¤±æ•ˆ(é‡æŒ‡é’ˆé—®é¢˜)
 				pos = _start + len;
 			}
 			iterator end = _finish - 1;

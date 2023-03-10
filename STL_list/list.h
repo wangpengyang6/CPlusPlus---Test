@@ -9,7 +9,7 @@ using std::pair;
 namespace wpy
 {
 	template<class T>
-	struct list_node  //Ò»¸ö½áµã
+	struct list_node  //ä¸€ä¸ªç»“ç‚¹
 	{
 		list_node<T>* _next;
 		list_node<T>* _prev;
@@ -21,10 +21,10 @@ namespace wpy
 		{}
 	};
 
-	//1¡¢µü´úÆ÷ÒªÃ´¾ÍÊÇÔ­ÉúÖ¸Õë
-	//2¡¢µü´úÆ÷ÒªÃ´¾ÍÊÇ×Ô¶¨ÒåÀàĞÍ¶ÔÔ­ÉúÖ¸ÕëµÄ·â×°£¬Ä£ÄâÖ¸ÕëµÄĞĞÎª
+	//1ã€è¿­ä»£å™¨è¦ä¹ˆå°±æ˜¯åŸç”ŸæŒ‡é’ˆ
+	//2ã€è¿­ä»£å™¨è¦ä¹ˆå°±æ˜¯è‡ªå®šä¹‰ç±»å‹å¯¹åŸç”ŸæŒ‡é’ˆçš„å°è£…ï¼Œæ¨¡æ‹ŸæŒ‡é’ˆçš„è¡Œä¸º
 	template<class T,class Ref,class Ptr> 
-	struct list_iterator  //¶Ô½áµãµü´úÆ÷½øĞĞ×Ô¶¨ÒåÀà
+	struct list_iterator  //å¯¹ç»“ç‚¹è¿­ä»£å™¨è¿›è¡Œè‡ªå®šä¹‰ç±»
 	{
 		typedef list_node<T> node;
 		typedef list_iterator<T, Ref, Ptr> Self;
@@ -41,18 +41,18 @@ namespace wpy
 		{
 			return &_node->_data;
 		}
-		Self& operator++() //Ç°ÖÃ++
+		Self& operator++() //å‰ç½®++
 		{
 			_node = _node->_next;
 			return *this;
 		}
-		Self operator++(int) //ºóÖÃ++
+		Self operator++(int) //åç½®++
 		{
 			Self tmp(*this);
 			_node = _node->_next;
 			return tmp;
 		}
-		Self& operator--()//Ç°ÖÃ--
+		Self& operator--()//å‰ç½®--
 		{
 			_node = _node->_prev;
 			return *this;
@@ -88,7 +88,27 @@ namespace wpy
 			_head->_next = _head;
 			_head->_prev = _head;
 		}
+		~list()
+		{
+			clear();
+			delete _head;
+		}
+		list(const list<int>& l)
+		{
+			empty_init();
 
+			list<int> tmp (l.begin(), l.end());
+			swap(tmp);
+		}
+		void swap(list<int>& l)
+		{
+			std::swap(_head,l._head);
+		}
+		list<int>& operator=(list<int> t)
+		{
+			swap(t);
+			return *this;
+		}
 		iterator begin()
 		{
 			return iterator(_head->_next);
@@ -104,6 +124,23 @@ namespace wpy
 		const_iterator end() const
 		{
 			return const_iterator(_head);
+		}
+		void empty_init()
+		{
+			_head = new node;
+			_head->_next = _head;
+			_head->_prev = _head;
+		}
+
+		template<class InputIterator>
+		list(InputIterator first, InputIterator end) //è¿­ä»£å™¨åŒºé—´åˆå§‹åŒ–
+		{
+			empty_init();
+			while (first != end)
+			{
+				push_back(*first);
+				++first;
+			}
 		}
 		void push_back(const T& x)
 		{
@@ -127,6 +164,14 @@ namespace wpy
 		{
 			erase(iterator(_head->_next));
 		}
+		void clear()
+		{
+			iterator it = begin();
+			while (it != end())
+			{
+				erase(it++);
+			}
+		}
 		void insert(iterator pos, const T& x)
 		{
 			node* cur = pos._node;
@@ -146,7 +191,7 @@ namespace wpy
 			node* prev = cur->_prev;
 			node* next = cur->_next;
 			prev->_next = next;
-			next->_prev = prev->_prev;
+			next->_prev = prev;
 			delete pos._node;
 		}
 	private:
@@ -181,12 +226,49 @@ namespace wpy
 //	wpy::list<pair<int, int>>::iterator it = l.begin();
 //	while (it != l.end())
 //	{
-//		cout << it->first << ' ' << it->second<<endl;//it->firstÓĞ±àÒëÆ÷ÓÅ»¯ Ê¡ÂÔÁËÒ»¸ö-> Ô­°æ£ºit->->first
+//		cout << it->first << ' ' << it->second<<endl;//it->firstæœ‰ç¼–è¯‘å™¨ä¼˜åŒ– çœç•¥äº†ä¸€ä¸ª-> åŸç‰ˆï¼šit->->first
 //		it++;
 //	}
 //}
 
-void test3()
+//void test3()
+//{
+//	wpy::list<int> l;
+//	l.push_back(3);
+//	l.push_back(4);
+//	l.push_front(2);
+//	l.push_front(1);
+//	for (auto e : l)
+//	{
+//		cout << e << ' ';
+//	}
+//	cout << endl;
+//	l.pop_back();
+//	l.pop_back();
+//	l.pop_front();
+//	for (auto e : l)
+//	{
+//		cout << e << ' ';
+//	}
+//	cout << endl;
+//	auto pos = l.begin();
+//	pos++;
+//	l.insert(pos, 20);
+//	for (auto e : l)
+//	{
+//		cout << e << ' ';
+//	}
+//	cout << endl;
+//
+//	l.clear();
+//	for (auto e : l)
+//	{
+//		cout << e << ' ';
+//	}
+//	cout << endl;
+//}
+
+void test4()
 {
 	wpy::list<int> l;
 	l.push_back(3);
@@ -198,18 +280,17 @@ void test3()
 		cout << e << ' ';
 	}
 	cout << endl;
-	l.pop_back();
-	l.pop_back();
-	l.pop_front();
+	
+	wpy::list<int> l1;
+	l1 = l;
+	l.clear();
 	for (auto e : l)
 	{
 		cout << e << ' ';
 	}
 	cout << endl;
-	auto pos = l.begin();
-	pos++;
-	l.insert(pos, 20);
-	for (auto e : l)
+	cout << "---------- " << endl;
+	for (auto e : l1)
 	{
 		cout << e << ' ';
 	}
